@@ -12,6 +12,8 @@ setup(
             ['resource/' + package_name]),
         ('share/' + package_name, ['package.xml']),
         ('share/' + package_name + '/launch', glob('launch/*.launch.py')),
+        ('share/' + package_name + '/worlds', glob('worlds/*')), # defines the extention of the file, like these have to be .world files
+        ('share/' + package_name + '/map', glob('map/*')),
     ],
     install_requires=['setuptools'],
     zip_safe=True,
