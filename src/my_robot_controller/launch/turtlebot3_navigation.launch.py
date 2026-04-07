@@ -47,7 +47,7 @@ def generate_launch_description():
     ld = LaunchDescription()
     ld.add_action(navigation_node)
     ld.add_action(gazebo_world)
-    #ld.add_action(goal_pose_publisher)
+    ld.add_action(goal_pose_publisher)
 
 
     return ld

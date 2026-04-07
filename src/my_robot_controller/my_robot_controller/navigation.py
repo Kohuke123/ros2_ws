@@ -13,6 +13,7 @@ class TurtleNavigationNode(Node):
         super().__init__("navigation")
         self.get_logger().info("Navigation Node started")
 
+        # These points have to be exrtacted from the map enviormetn somehow
         self.goal_poses = [  # Define goal positions and orientations
             {'x': 0.17, 'y': -1.98, 'yaw': -30},
             {'x': 1.72, 'y': 0.68, 'yaw': 60},
@@ -36,11 +37,12 @@ class TurtleNavigationNode(Node):
         time.sleep(5) # wait to let the simulation and turtlebot navigation to being loaded.
         self.publish_initial_pose()
         time.sleep(5)
-        self.publish_goal()
+        self.publish_goal() 
 
+    # If something is wrong with mt robot then there is a problem here probably somewhere
     def publish_initial_pose(self):
         initial_pose = PoseWithCovarianceStamped()
-        initial_pose.header.frame_id = 'map'
+        initial_pose.header.frame_id = 'map' # frame id, if issue then maybe helps to fix it
         initial_pose.pose.pose.position.x = -2.0
         initial_pose.pose.pose.position.y = -0.5
 
@@ -72,6 +74,7 @@ class TurtleNavigationNode(Node):
             self.get_logger().info("All goals reached!")
             rclpy.shutdown()
 
+    #
     def publish_goal(self):
         
         goal = self.goal_poses[self.current_goal_index]
