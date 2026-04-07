@@ -40,10 +40,12 @@ class TurtleNavigationNode(Node):
         self.publish_goal() 
 
     # If something is wrong with mt robot then there is a problem here probably somewhere
+    # if i do not see the blue box in nagivation then something is worng, like on the map where it turns pink, red purple and blue 
+    # if i get these issues then i have to report it too in my anbalyzis
     def publish_initial_pose(self):
         initial_pose = PoseWithCovarianceStamped()
         initial_pose.header.frame_id = 'map' # frame id, if issue then maybe helps to fix it
-        initial_pose.pose.pose.position.x = -2.0
+        initial_pose.pose.pose.position.x = -1.0 # i have to change it inboth fileshere and world.launch.py
         initial_pose.pose.pose.position.y = -0.5
 
         quaternion = tf_transformations.quaternion_from_euler(0, 0, 0)

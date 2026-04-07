@@ -30,9 +30,9 @@ def generate_launch_description():
     pkg_gazebo_ros = get_package_share_directory('gazebo_ros')
 
     use_sim_time = LaunchConfiguration('use_sim_time', default='true')
-    x_pose = LaunchConfiguration('x_pose', default='-2.0') # I THINK THIS IS FO RMAPPING, fro env defining
+    x_pose = LaunchConfiguration('x_pose', default='-1.0') # I THINK THIS IS FO RMAPPING, fro env defining
     y_pose = LaunchConfiguration('y_pose', default='-0.5') # first spawning point of the robot
-
+    # if i change it i have to localize it somewhere
     world = os.path.join(
         get_package_share_directory('turtlebot3_gazebo'),
         'worlds',
