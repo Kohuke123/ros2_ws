@@ -30,13 +30,13 @@ def generate_launch_description():
     pkg_gazebo_ros = get_package_share_directory('gazebo_ros')
 
     use_sim_time = LaunchConfiguration('use_sim_time', default='true')
-    x_pose = LaunchConfiguration('x_pose', default='0') # I THINK THIS IS FO RMAPPING, fro env defining
-    y_pose = LaunchConfiguration('y_pose', default='0') # first spawning point of the robot
+    x_pose = LaunchConfiguration('x_pose', default='-2.0') # I THINK THIS IS FO RMAPPING, fro env defining
+    y_pose = LaunchConfiguration('y_pose', default='-0.5') # first spawning point of the robot
 
     world = os.path.join(
-        get_package_share_directory('my_robot_controller'),
+        get_package_share_directory('turtlebot3_gazebo'),
         'worlds',
-        'vudi.world' #generates the world, os if we want our own world we modify 
+        'turtlebot3_world.world' #generates the world, os if we want our own world we modify 
     )
 
     gzserver_cmd = IncludeLaunchDescription(
