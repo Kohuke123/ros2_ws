@@ -1,70 +1,140 @@
-# ROS 2 Humble Development Environment
-c
-This repository provides a containerized development environment for ROS 2 Humble, specifically configured for TurtleBot 3 simulation and navigation. It uses **Docker Compose** to manage the container lifecycle and a helper script to simplify terminal access.
+# TurtleBot3 Custom Environment Mapping
 
-## 📂 File Structure
+This project was completed for the **Autonomous Vehicle Practical Course** task **“Mapping Your Custom Environment”**.  
+The aim of the task was to create a custom Gazebo world, implement an autonomous mapping node for TurtleBot3, and generate a map of the environment using ROS 2 and SLAM.
 
-* **`Dockerfile_current`**: The base image using `osrf/ros:humble-desktop`. It installs TurtleBot 3 packages, Gazebo, Navigation2, and essential tools like `transforms3d`.
-* **`docker-compose.yml`**: Configures the container to use `host` networking and maps your local workspace directories to the container.
-* **`docker_terminal.sh`**: A helper script that handles X11 permissions for GUI apps and enters the container environment.
-* **`ros2_ws/`**: Your local workspace directory where your code resides.
+## Project Overview
 
----
+The project includes:
+- a custom Gazebo world
+- an autonomous mapping node (`mapping.py`)
+- launch files for running the simulation
+- generated map files
 
-## 🚀 Getting Started
+## Requirements
 
-### 1. Prerequisites
-Ensure you have Docker and Docker Compose installed on your host machine.
+This project was made using:
+- Ubuntu 22.04
+- ROS 2 Humble
+- Gazebo
+- TurtleBot3 packages
+- Cartographer
+- Navigation2
+- Docker classroom environment
 
-### 2. Launching the Environment
-You do not need to build the image manually using complex commands. Use the provided shell script to automate the process:
+## Required Packages
+
+Install the required packages:
 
 ```bash
-chmod +x docker_terminal.sh
+sudo apt install ros-humble-gazebo-*
+sudo apt install ros-humble-cartographer
+sudo apt install ros-humble-cartographer-ros
+sudo apt install ros-humble-navigation2
+sudo apt install ros-humble-nav2-bringup
+sudo apt install ros-humble-turtlebot3-msgs
+sudo apt install ros-humble-turtlebot3
+```
+
+## Environment Setup
+
+Add the required environment variables:
+
+```bash
+echo 'export ROS_DOMAIN_ID=30 #TURTLEBOT3' >> ~/.bashrc
+echo 'source /usr/share/gazebo/setup.sh' >> ~/.bashrc
+echo 'export TURTLEBOT3_MODEL=burger' >> ~/.bashrc
+source ~/.bashrc
+```
+
+## Workspace Setup
+
+Clone the TurtleBot3 simulation package into the workspace:
+
+```bash
+cd ~/ros2_ws/
+git submodule add -b humble https://github.com/ROBOTIS-GIT/turtlebot3_simulations.git src/turtlebot3_simulations
+```
+
+Then enter Docker and build the workspace:
+
+```bash
 ./docker_terminal.sh
+cd ~/ws
+. build_ws.sh
 ```
 
-**This script performs the following:**
+## Custom World Setup
 
-*   Ensures a .bash\_history file exists so your command history is saved.
-    
-*   Runs xhost +local:docker to allow GUI tools (Gazebo/Rviz) to open on your host screen.
-    
-*   Starts the container in "detached" mode using docker compose up -d.
-    
-*   Logs you into the container terminal as the user **student**.
-    
-
-### 3\. Building Your Workspace
-
-Once inside the container terminal, navigate to your workspace and build your packages using colcon:
+The custom world was created in Gazebo Building Editor and saved inside:
 
 ```bash
-cd ~/ros2_ws  
-colcon build --symlink-install  
-source install/setup.bash   
+~/ws/src/my_robot_controller/worlds/
 ```
 
+Example:
 
-🛠 Environment Details
-----------------------
+```text
+my_custom_world.world
+```
 
-The environment is pre-configured with the following settings in your .bashrc:
+To launch the custom world, the original `turtlebot3_world.launch.py` file was copied into the `launch` folder of `my_robot_controller` and modified to load the custom world.
 
-*   **User**: student (Non-root user with sudo privileges).
-    
-*   **ROS\_DOMAIN\_ID**: 30 (Prevents interference with other students on the network).
-    
-*   **TURTLEBOT3\_MODEL**: burger (Default robot model for simulations).
-    
-*   **ROS\_LOCALHOST\_ONLY**: 1 (Limits ROS 2 traffic to the local machine).
-    
+## setup.py Changes
 
-⚠️ Important Notes
-------------------
+The `setup.py` file must include the package folders during installation:
 
-*   **Persistence**: Only files saved inside ~/ros2\_ws are stored on your physical computer. Other changes are lost when the container is removed.
-    
-*   **GUI Tools**: To run Gazebo or Rviz2, simply type the command in the terminal. The display is redirected to your host machine via the DISPLAY environment variable.
-    
-*   **Permissions**: If you need to install extra software, use sudo apt update. The student user has passwordless sudo access.
+```python
+from glob import glob
+
+data_files=[
+    ('share/ament_index/resource_index/packages',
+        ['resource/' + package_name]),
+    ('share/' + package_name, ['package.xml']),
+    ('share/' + package_name + '/launch', glob('launch/*.launch.py')),
+    ('share/' + package_name + '/maps', glob('maps/*')),
+    ('share/' + package_name + '/worlds', glob('worlds/*'))
+],
+```
+## Build the Workspace
+
+After making the changes, rebuild the workspace:
+
+```bash
+cd ~/ws
+. build_ws.sh
+```
+
+## Running the Mapping Process
+
+### 1. Launch the custom world
+
+```bash
+ros2 launch my_robot_controller turtlebot3_world.launch.py
+```
+
+### 2. Launch Cartographer SLAM
+
+```bash
+ros2 launch turtlebot3_cartographer cartographer.launch.py use_sim_time:=True
+```
+
+### 3. Run the mapping node
+
+```bash
+ros2 run my_robot_controller mapping
+```
+
+## Save the Generated Map
+
+After the robot has explored the environment, save the map with:
+
+```bash
+ros2 run nav2_map_server map_saver_cli -f ~/ws/my_robot_controller/maps/my_map
+```
+
+This saves the generated map files in the `maps` folder.
+
+## Author
+
+Sandra Põllu
