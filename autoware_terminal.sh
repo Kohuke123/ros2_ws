@@ -6,8 +6,10 @@ CONTAINER_NAME="autoware_dev"
 CONTAINER_WORKDIR="/ros2_ws"
 
 # Host paths to mount
-HOST_ROS_WS="/home/autolab/ros2_ws"
-HOST_MAP_DIR="/home/autolab/autoware_map"
+HOST_ROS_WS="/home/$USER/ros2_ws"
+HOST_MAP_DIR="/home/$USER/autoware_map"
+
+FILE_TO_SOURCE="/ros2_ws/setup.bash"
 
 # Create necessary folders on the HOST first so Docker doesn't create them as root
 # ROS 2 uses 'install' and 'log' instead of 'devel' and 'logs'
@@ -24,7 +26,7 @@ RUNNING=$(docker ps -q -f "name=^/${CONTAINER_NAME}$")
 
 if [ -n "$RUNNING" ]; then
     echo "Container '$CONTAINER_NAME' is already running. Opening new terminal..."
-    docker exec -it "$CONTAINER_NAME" bash
+    docker exec -it "$CONTAINER_NAME" bash -c "source $FILE_TO_SOURCE && bash"
 else
     # Check if a stopped container with that name exists and remove it to avoid conflicts
     if [ "$(docker ps -aq -f "name=^/${CONTAINER_NAME}$")" ]; then
@@ -42,11 +44,10 @@ else
         --net=host \
         --env="DISPLAY=$DISPLAY" \
         --env="QT_X11_NO_MITSHM=1" \
-        --env="ROS_LOCALHOST_ONLY=1" \
         -v /tmp/.X11-unix:/tmp/.X11-unix:rw \
         -v "$HOST_ROS_WS":"$CONTAINER_WORKDIR" \
         -v "$HOST_MAP_DIR":/autoware_map \
         --workdir "$CONTAINER_WORKDIR" \
         "$IMAGE_NAME" \
-        bash
+        bash -c "source $FILE_TO_SOURCE && bash"
 fi
