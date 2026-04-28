@@ -37,8 +37,8 @@ class AWNavigationNode(Node):
         initial_pose.header.frame_id = 'map'
         initial_pose.pose.pose.position.x = 3727.865966796875
         initial_pose.pose.pose.position.y = 73754.2265625
-        initial_pose.pose.pose.orientation.x = 0.0
-        initial_pose.pose.pose.orientation.y = 0.0
+        initial_pose.pose.pose.orientation.x = 0.0 # Something important 
+        initial_pose.pose.pose.orientation.y = 0.0 # Something important 
         initial_pose.pose.pose.orientation.z = 0.8314754211288511
         initial_pose.pose.pose.orientation.w = 0.5555615393982919
         

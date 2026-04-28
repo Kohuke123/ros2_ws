@@ -17,11 +17,11 @@ def generate_launch_description():
     map_dir = os.path.join(
         get_package_share_directory('my_robot_controller'),
         'maps',
-        'my_map.yaml'
+        'map.yaml'
     )
     gazebo_world = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
-                os.path.join(pkg_turtlebot3_gazebo, 'launch', 'turtlebot3_world.launch.py')
+                os.path.join(pkg_turtlebot3_gazebo, 'launch', 'my_turtlebot3.launch.py')
         )
     )
 

@@ -45,8 +45,8 @@ class TurtleNavigationNode(Node):
     def publish_initial_pose(self):
         initial_pose = PoseWithCovarianceStamped()
         initial_pose.header.frame_id = 'map' # frame id, if issue then maybe helps to fix it
-        initial_pose.pose.pose.position.x = -1.0 # i have to change it inboth fileshere and world.launch.py
-        initial_pose.pose.pose.position.y = -0.5
+        initial_pose.pose.pose.position.x = 0 # i have to change it inboth fileshere and world.launch.py
+        initial_pose.pose.pose.position.y = 0   
 
         quaternion = tf_transformations.quaternion_from_euler(0, 0, 0)
         initial_pose.pose.pose.orientation.x = quaternion[0]
