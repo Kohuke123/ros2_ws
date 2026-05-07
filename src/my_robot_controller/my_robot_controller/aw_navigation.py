@@ -37,10 +37,14 @@ class AWNavigationNode(Node):
         initial_pose.header.frame_id = 'map'
         initial_pose.pose.pose.position.x = 3727.865966796875
         initial_pose.pose.pose.position.y = 73754.2265625
-        initial_pose.pose.pose.orientation.x = 0.0 # Something important 
-        initial_pose.pose.pose.orientation.y = 0.0 # Something important 
-        initial_pose.pose.pose.orientation.z = 0.8314754211288511
-        initial_pose.pose.pose.orientation.w = 0.5555615393982919
+        #initial_pose.pose.pose.orientation.x = 0.0 # Something important 
+        #initial_pose.pose.pose.orientation.y = 0.0 # Something important 
+        #initial_pose.pose.pose.orientation.z = 0.8314754211288511
+        #initial_pose.pose.pose.orientation.w = 0.5555615393982919
+        initial_pose.pose.pose.position.x = 3888.959
+        initial_pose.pose.pose.position.y = 73811.71
+        initial_pose.pose.pose.orientation.z = 0.85
+        initial_pose.pose.pose.orientation.w = 0.50
         
         time.sleep(5)
         self.initial_pose_publisher.publish(initial_pose)
@@ -48,10 +52,29 @@ class AWNavigationNode(Node):
 
         # here si the goal poses that i grab from the enviorment
 
-        self.goal_poses.append({'x': 3797.35, 'y': 73712.72, 'z': 0.24, 'w': 0.97})
-        self.goal_poses.append({'x': 3755.95, 'y': 73765.02, 'z': -0.5, 'w': 0.86})
+        #self.goal_poses.append({'x': 3797.35, 'y': 73712.72, 'z': 0.24, 'w': 0.97})
+        #self.goal_poses.append({'x': 3755.95, 'y': 73765.02, 'z': -0.5, 'w': 0.86})
 
-        
+        self.goal_poses = [
+            {
+                "x": 3736.511474609375,
+                "y": 73730.90625,
+                "z": 0.20213396883086887,
+                "w": 0.9793578807793816,
+            },
+            {
+                "x": 3755.933349609375,
+                "y": 73790.9921875,
+                "z": 0.22180819169165675,
+                "w": 0.9750903168929929,
+            },
+            {
+                "x": 3839.626953125,
+                "y": 73757.109375,
+                "z": -0.49813528349508446,
+                "w": 0.8670993249549165,
+            },
+        ]
         
         time.sleep(5)
         self.publish_goal()
