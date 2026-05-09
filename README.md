@@ -181,6 +181,106 @@ This will:
 
 ---
 
+
+# Task 3 / P3 — Autoware Autonomous Navigation
+
+In Task 3, the Autoware autonomous driving stack is used to navigate an Ego vehicle in a simulated map. The task includes defining an initial vehicle pose, selecting at least three valid goal poses, creating a custom ROS2 node, and integrating the node with an Autoware launch file.
+
+The main package used for this task is:
+
+```bash
+my_robot_controller
+```
+
+The custom Autoware navigation node is:
+
+```bash
+aw_navigation.py
+```
+
+The launch file for the full Autoware navigation task is:
+
+```bash
+car_nav.launch.py
+```
+
+---
+
+## Autoware Environment Setup
+
+The task was completed inside the Autoware Docker environment. Autoware terminal can be opened with:
+
+```bash
+cd ~/ros2_ws
+./autoware_terminal.sh
+```
+
+## Ignoring TurtleBot Packages for Autoware
+
+For Task 3, the TurtleBot packages are not needed. They can be ignored during the build process by creating `COLCON_IGNORE` files:
+
+```bash
+touch /ros2_ws/src/turtlebot3/COLCON_IGNORE
+touch /ros2_ws/src/turtlebot3_simulations/COLCON_IGNORE
+```
+
+## Building Task 3
+
+Inside the Autoware Docker terminal:
+
+```bash
+cd /ros2_ws
+
+rm -rf build install log
+
+source /opt/ros/humble/setup.bash
+source /autoware/install/setup.bash
+
+colcon build --symlink-install --packages-select my_robot_controller
+
+source /ros2_ws/setup.bash
+```
+
+## Running Autoware Manually
+
+To launch only the Autoware planning simulator:
+
+```bash
+ros2 launch autoware_launch planning_simulator.launch.xml \
+map_path:=/autoware_map/sample-map-planning \
+vehicle_model:=sample_vehicle \
+sensor_model:=sample_sensor_kit
+```
+
+In a second Docker terminal, source the workspace and run the custom navigation node:
+
+```bash
+cd /ros2_ws
+source /ros2_ws/setup.bash
+ros2 run my_robot_controller av_nav
+```
+
+---
+
+## Running Task 3 with One Launch File
+
+The complete Task 3 pipeline can also be launched with:
+
+```bash
+cd /ros2_ws
+source /ros2_ws/setup.bash
+ros2 launch my_robot_controller car_nav.launch.py
+```
+
+This launch file starts:
+
+1. the Autoware planning simulator
+2. the sample planning map
+3. the sample vehicle and sensor model
+4. the custom `av_nav` navigation node
+
+---
+
 ## Author
 
 Sandra Põllu
