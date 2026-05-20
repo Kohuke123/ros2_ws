@@ -281,6 +281,69 @@ This launch file starts:
 
 ---
 
+
+# Task 4 / P4 — AV Validation: Create and Simulate an Interactive Scenario
+
+The parameterized scenario file is:
+
+```bash
+/scenario_4.yaml
+```
+
+## Scenario Setup
+
+The scenario was created in the online TIER IV Scenario Editor: <https://scenario.ci.tier4.jp/scenario_editor>
+
+The Kashiwanoha Lanelet2 map was imported from the Scenario Simulator V2 repository: <https://github.com/tier4/scenario_simulator_v2/blob/master/map/kashiwanoha_map/map/lanelet2_map.osm>
+
+The Ego vehicle was given a route through the intersection. `Npc1` is time-triggered (added 1 s after simulation start) and crosses the intersection ahead of the Ego. `Npc2` is position-triggered — it is added once the Ego reaches a defined point along its lane, which makes the crossing conflict depend on how far the Ego has progressed.
+
+## ScenarioModifiers (Parameter Sweep)
+
+Two range variables were added at the top of the YAML file to mutate the scenario:
+
+```yaml
+ScenarioModifiers:
+  ScenarioModifier:
+    - { name: EGO_START_S,    start: 16, step: 2, stop: 34 }   # 10 values
+    - { name: NPC2_TRIGGER_S, start: 36, step: 1, stop: 45 }   # 10 values
+```
+
+The cross-product gives **10 × 10 = 100 simulations**. The variables are then substituted into the Storyboard:
+
+* `EGO_START_S` replaces the fixed `s:` value in the Ego `TeleportAction` (lane 34408).
+* `NPC2_TRIGGER_S` replaces the fixed `s:` value in the `ReachPositionCondition` that launches `Npc2`.
+
+## Running the Batch Simulation
+
+Inside the Autoware + Scenario Simulator Docker container:
+
+```bash
+cd ~/ros2_ws
+./autoware_terminal.sh
+```
+
+```bash
+ros2 launch scenario_test_runner scenario_test_runner.launch.py \
+  architecture_type:=awf/universe record:=false \
+  scenario:='/autoware_map/scenarios/scenario_4.yaml' \
+  sensor_model:=sample_sensor_kit vehicle_model:=sample_vehicle \
+  output_directory:='/autoware_map/results' \
+  global_real_time_factor:=5.0 launch_rviz:=false use_sim_time:=true
+```
+
+The scenario_test_runner reads the `ScenarioModifiers` block, generates the full cross-product, and runs each combination as `scenario_4_0`, `scenario_4_1`, ... `scenario_4_99`. If Autoware behaves unstably, the `global_real_time_factor` can be lowered to 2.0 or 3.0.
+
+## Output Files
+
+After the batch run finishes, the output directory contains:
+
+* `result_junit.xml` — summary of all 100 iterations (failures, errors).
+* `scenario_4_N.xosc` — one OpenSCENARIO file per iteration, containing the actual `EGO_START_S` and `NPC2_TRIGGER_S` values used in that run.
+
+These two file types are joined together (by iteration index) to map each parameter combination to its outcome, which forms the basis of the domain analysis in the report.
+
+
 ## Author
 
 Sandra Põllu
